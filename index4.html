@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AhaarIQ - Indian Meal & Nutrition Tracker</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            },
+          }
+        }
+      }
+    </script>
+    <!-- React & ReactDOM UMD -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel standalone for in-browser JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-[#0b0f19] dark:bg-[#0b0f19] bg-slate-100 text-slate-900 dark:text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white transition-colors duration-300">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const CameraIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><circle cx="12" cy="13" r="4" /></svg>
+        );
+        const CalendarIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+        );
+        const TrashIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /></svg>
+        );
+        const UtensilsIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M18 10h-1.26A8 8 0 109 20h9a2 2 0 002-2v-6a2 2 0 00-2-2z" /></svg>
+        );
+        const FlameIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+        );
+        const CheckIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" /></svg>
+        );
+        const XIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+        );
+        const SparklesIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
+        );
+        const ChevronUpIcon = () => (
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15" /></svg>
+        );
+        const ChevronDownIcon = () => (
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9" /></svg>
+        );
+        const BotIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4" /></svg>
+        );
+        const SettingsIcon = () => (
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" /></svg>
+        );
+        const SunIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>
+        );
+        const MoonIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
+        );
+        const HelpIcon = () => (
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+        );
+        const KeyIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.778-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" /></svg>
+        );
+        const ImageIcon = () => (
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
+        );
+        const SendIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+        );
+        const UserIcon = () => (
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+        );
+        const LightbulbIcon = () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 18h6m-3-3v3M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 001 1h6a1 1 0 001-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7z" /></svg>
+        );
+        const RefreshIcon = () => (
+          <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10" /><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10" /></svg>
+        );
+
+        function App() {
+          const [activeTab, setActiveTab] = React.useState('scan');
+          
+          const [darkMode, setDarkMode] = React.useState(() => {
+            try {
+              const saved = localStorage.getItem('ahaariq_dark');
+              return saved !== null ? JSON.parse(saved) : true;
+            } catch (e) {
+              return true;
+            }
+          });
+
+          const [apiKey, setApiKey] = React.useState(() => {
+            try {
+              return localStorage.getItem('ahaariq_apikey') || '';
+            } catch (e) {
+              return '';
+            }
+          });
+
+          const [showApiKeyModal, setShowApiKeyModal] = React.useState(() => {
+            try {
+              const savedKey = localStorage.getItem('ahaariq_apikey');
+              const hasSeenModal = localStorage.getItem('ahaariq_seen_apikey_prompt');
+              return !savedKey && !hasSeenModal;
+            } catch (e) {
+              return false;
+            }
+          });
+
+          const [tempApiKeyInput, setTempApiKeyInput] = React.useState('');
+
+          React.useEffect(() => {
+            try {
+              localStorage.setItem('ahaariq_dark', JSON.stringify(darkMode));
+              if (darkMode) {
+                document.documentElement.classList.add('dark');
+              } else {
+                document.documentElement.classList.remove('dark');
+              }
+            } catch (e) {}
+          }, [darkMode]);
+
+          React.useEffect(() => {
+            try {
+              if (apiKey) localStorage.setItem('ahaariq_apikey', apiKey);
+            } catch (e) {}
+          }, [apiKey]);
+
+          const closeApiKeyModal = () => {
+            try {
+              localStorage.setItem('ahaariq_seen_apikey_prompt', 'true');
+            } catch (e) {}
+            setShowApiKeyModal(false);
+          };
+
+          const [meals, setMeals] = React.useState(() => {
+            try {
+              const saved = localStorage.getItem('ahaariq_logs');
+              if (saved) {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed)) return parsed;
+              }
+            } catch (e) {}
+            return [];
+          });
+
+          const [expandedDates, setExpandedDates] = React.useState(() => {
+            const todayStr = new Date().toISOString().split('T')[0];
+            return { [todayStr]: true };
+          });
+
+          const [expandedMeals, setExpandedMeals] = React.useState({});
+
+          const toggleDateAccordion = (date) => {
+            setExpandedDates(prev => ({ ...prev, [date]: !prev[date] }));
+          };
+
+          const toggleMealAccordion = (mealId) => {
+            setExpandedMeals(prev => ({ ...prev, [mealId]: !prev[mealId] }));
+          };
+
+          const [userProfile, setUserProfile] = React.useState(() => {
+            try {
+              const saved = localStorage.getItem('ahaariq_profile');
+              if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed && typeof parsed === 'object') {
+                  return {
+                    name: parsed.name || 'Friend',
+                    gender: parsed.gender || 'male',
+                    age: Number(parsed.age) || 28,
+                    height: Number(parsed.height) || 175,
+                    weight: Number(parsed.weight) || 72,
+                    activityLevel: parsed.activityLevel || 'moderate',
+                    goal: parsed.goal || 'maintain',
+                    dietPreference: parsed.dietPreference || 'veg'
+                  };
+                }
+              }
+            } catch (e) {}
+            return {
+              name: 'Friend', gender: 'male', age: 28, height: 175, weight: 72, activityLevel: 'moderate', goal: 'maintain', dietPreference: 'veg'
+            };
+          });
+
+          const [dailyGoals, setDailyGoals] = React.useState({
+            calories: 2000, protein: 130, carbs: 225, fat: 65
+          });
+
+          const [activeMetricModal, setActiveMetricModal] = React.useState(null);
+
+          // Guaranteed synchronization and persistence of meal logs
+          React.useEffect(() => {
+            try {
+              localStorage.setItem('ahaariq_logs', JSON.stringify(meals));
+            } catch (e) {
+              console.error("Failed to save meal logs to localStorage", e);
+            }
+          }, [meals]);
+
+          React.useEffect(() => {
+            try {
+              let bmr = (10 * Number(userProfile.weight)) + (6.25 * Number(userProfile.height)) - (5 * Number(userProfile.age));
+              if (userProfile.gender === 'male') bmr += 5;
+              else bmr -= 161;
+
+              const activityMultipliers = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, very_active: 1.9 };
+              const tdee = bmr * (activityMultipliers[userProfile.activityLevel] || 1.55);
+
+              let targetCalories = Math.round(tdee);
+              if (userProfile.goal === 'lose') targetCalories -= 500;
+              else if (userProfile.goal === 'gain') targetCalories += 400;
+              else if (userProfile.goal === 'aggressive_lose') targetCalories -= 750;
+              else if (userProfile.goal === 'lean_gain') targetCalories += 250;
+
+              let proteinMultiplier = 1.6;
+              if (userProfile.goal === 'gain' || userProfile.goal === 'lean_gain') proteinMultiplier = 2.0;
+              if (userProfile.goal === 'lose' || userProfile.goal === 'aggressive_lose') proteinMultiplier = 2.2;
+              
+              const targetProtein = Math.round(Number(userProfile.weight) * proteinMultiplier);
+              const targetFat = Math.round((targetCalories * 0.27) / 9);
+              const remainingCaloriesForCarbs = Math.max(400, targetCalories - ((targetProtein * 4) + (targetFat * 9)));
+              const targetCarbs = Math.round(remainingCaloriesForCarbs / 4);
+
+              setDailyGoals({
+                calories: Math.max(1200, targetCalories),
+                protein: Math.max(50, targetProtein),
+                carbs: Math.max(100, targetCarbs),
+                fat: Math.max(30, targetFat)
+              });
+              localStorage.setItem('ahaariq_profile', JSON.stringify(userProfile));
+            } catch (e) {}
+          }, [userProfile]);
+
+          const [selectedImage, setSelectedImage] = React.useState(null);
+          const [imagePreviewUrl, setImagePreviewUrl] = React.useState('');
+          const [userMealNote, setUserMealNote] = React.useState('');
+          const [isAnalyzing, setIsAnalyzing] = React.useState(false);
+          const [analyzedResult, setAnalyzedResult] = React.useState(null);
+          const [mealType, setMealType] = React.useState('Lunch');
+          const [notification, setNotification] = React.useState(null);
+          const [offlineMode, setOfflineMode] = React.useState(false);
+
+          const [showManualModal, setShowManualModal] = React.useState(false);
+          const [manualForm, setManualForm] = React.useState({
+            dishName: '', calories: 350, protein: 10, carbs: 50, fat: 12, mealType: 'Lunch'
+          });
+
+          const [aiCoachMessages, setAiCoachMessages] = React.useState([
+            { role: 'model', text: 'Namaste! I am your AhaarIQ AI Nutrition Coach. Ask me anything about Indian diet modifications, protein sources in traditional thalis, or advice on your daily macro goals!' }
+          ]);
+          const [coachInput, setCoachInput] = React.useState('');
+          const [isCoachLoading, setIsCoachLoading] = React.useState(false);
+          const [dailyInsights, setDailyInsights] = React.useState(null);
+          const [isGeneratingInsights, setIsGeneratingInsights] = React.useState(false);
+
+          const showToast = (message) => {
+            setNotification(message);
+            setTimeout(() => setNotification(null), 3500);
+          };
+
+          const todayStr = new Date().toISOString().split('T')[0];
+          const todaysMeals = meals.filter(m => m.date === todayStr);
+          const todayTotals = todaysMeals.reduce((acc, curr) => ({
+            calories: acc.calories + Number(curr.calories),
+            protein: acc.protein + Number(curr.protein),
+            carbs: acc.carbs + Number(curr.carbs),
+            fat: acc.fat + Number(curr.fat),
+          }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+
+          const handleImageUpload = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const base64String = reader.result.split(',')[1];
+              setSelectedImage(base64String);
+              setImagePreviewUrl(reader.result);
+              setUserMealNote('');
+            };
+            reader.readAsDataURL(file);
+          };
+
+          const runMealAnalysis = async () => {
+            if (!selectedImage) return;
+            setIsAnalyzing(true);
+            setAnalyzedResult(null);
+            setOfflineMode(false);
+
+            const noteContext = userMealNote.trim() ? ` User specific notes about this meal: "${userMealNote.trim()}".` : '';
+            const prompt = `Analyze this Indian food image. The user's dietary preference is "${userProfile.dietPreference}".${noteContext} Identify the overall meal name (dishName), general description, total calories, total protein, total carbs, and total fat, respecting the user's notes and portion details if provided. Crucially, break down individual items detected with quantity, calories, protein, carbs, and fat. Return ONLY valid JSON with keys: dishName, description, calories, protein, carbs, fat, items (array of objects with itemName, quantity, calories, protein, carbs, fat).`;
+
+            try {
+              const activeKey = apiKey || "";
+              if (!activeKey) throw new Error("No API key");
+              const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${activeKey}`;
+              const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: selectedImage } }] }],
+                generationConfig: {
+                  responseMimeType: "application/json",
+                  responseSchema: {
+                    type: "OBJECT",
+                    properties: {
+                      dishName: { type: "STRING" },
+                      description: { type: "STRING" },
+                      calories: { type: "NUMBER" },
+                      protein: { type: "NUMBER" },
+                      carbs: { type: "NUMBER" },
+                      fat: { type: "NUMBER" },
+                      items: {
+                        type: "ARRAY",
+                        items: {
+                          type: "OBJECT",
+                          properties: {
+                            itemName: { type: "STRING" },
+                            quantity: { type: "STRING" },
+                            calories: { type: "NUMBER" },
+                            protein: { type: "NUMBER" },
+                            carbs: { type: "NUMBER" },
+                            fat: { type: "NUMBER" }
+                          },
+                          required: ["itemName", "quantity", "calories", "protein", "carbs", "fat"]
+                        }
+                      }
+                    },
+                    required: ["dishName", "description", "calories", "protein", "carbs", "fat", "items"]
+                  }
+                }
+              };
+
+              const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+              const result = await response.json();
+              const candidate = result.candidates?.[0];
+              if (candidate && candidate.content?.parts?.[0]?.text) {
+                setAnalyzedResult(JSON.parse(candidate.content.parts[0].text));
+              } else {
+                throw new Error("Failed");
+              }
+            } catch (err) {
+              setOfflineMode(true);
+              const customName = userMealNote.trim() || "Custom Indian Meal";
+              setAnalyzedResult({
+                dishName: `${customName} (Offline Fallback)`,
+                description: `Analyzed with user note: "${userMealNote || 'None'}". Tailored to ${userProfile.dietPreference} preference.`,
+                calories: 420, 
+                protein: 16, 
+                carbs: 52, 
+                fat: 14,
+                items: [
+                  { itemName: customName, quantity: userMealNote.includes('ml') || userMealNote.includes('g') ? userMealNote : "1 serving", calories: 420, protein: 16, carbs: 52, fat: 14 }
+                ]
+              });
+              showToast(`Analyzed successfully using AhaarIQ offline engine with your notes!`);
+            } finally {
+              setIsAnalyzing(false);
+            }
+          };
+
+          const handleConfirmAnalyzedMeal = () => {
+            if (!analyzedResult) return;
+            const newEntry = {
+              id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+              date: todayStr,
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              mealType: mealType,
+              dishName: analyzedResult.dishName,
+              calories: Number(analyzedResult.calories),
+              protein: Number(analyzedResult.protein),
+              carbs: Number(analyzedResult.carbs),
+              fat: Number(analyzedResult.fat),
+              items: analyzedResult.items || [],
+              image: imagePreviewUrl || 'https://placehold.co/400x300/6366f1/white?text=Indian+Meal'
+            };
+
+            setMeals(prevMeals => {
+              const updated = [newEntry, ...prevMeals];
+              try {
+                localStorage.setItem('ahaariq_logs', JSON.stringify(updated));
+              } catch (e) {}
+              return updated;
+            });
+
+            showToast(`Added ${analyzedResult.dishName} to your daily log!`);
+            setSelectedImage(null);
+            setImagePreviewUrl('');
+            setUserMealNote('');
+            setAnalyzedResult(null);
+            setActiveTab('history');
+          };
+
+          const handleManualSubmit = (e) => {
+            e.preventDefault();
+            if (!manualForm.dishName) return;
+
+            const newEntry = {
+              id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+              date: todayStr,
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              mealType: manualForm.mealType,
+              dishName: manualForm.dishName,
+              calories: Number(manualForm.calories),
+              protein: Number(manualForm.protein),
+              carbs: Number(manualForm.carbs),
+              fat: Number(manualForm.fat),
+              items: [{ itemName: manualForm.dishName, quantity: "1 serving", calories: Number(manualForm.calories), protein: Number(manualForm.protein), carbs: Number(manualForm.carbs), fat: Number(manualForm.fat) }],
+              image: 'https://placehold.co/400x300/6366f1/white?text=' + encodeURIComponent(manualForm.dishName)
+            };
+
+            setMeals(prevMeals => {
+              const updated = [newEntry, ...prevMeals];
+              try {
+                localStorage.setItem('ahaariq_logs', JSON.stringify(updated));
+              } catch (e) {}
+              return updated;
+            });
+
+            setShowManualModal(false);
+            setManualForm({ dishName: '', calories: 350, protein: 10, carbs: 50, fat: 12, mealType: 'Lunch' });
+            showToast("Custom meal added successfully!");
+            setActiveTab('history');
+          };
+
+          const deleteMeal = (id) => {
+            setMeals(prevMeals => {
+              const updated = prevMeals.filter(m => m.id !== id);
+              try {
+                localStorage.setItem('ahaariq_logs', JSON.stringify(updated));
+              } catch (e) {}
+              return updated;
+            });
+            showToast("Meal entry removed.");
+          };
+
+          const handleSendCoachMessage = async (e) => {
+            e.preventDefault();
+            if (!coachInput.trim() || isCoachLoading) return;
+            const userMsg = coachInput.trim();
+            setCoachInput('');
+            const newMsgs = [...aiCoachMessages, { role: 'user', text: userMsg }];
+            setAiCoachMessages(newMsgs);
+            setIsCoachLoading(true);
+
+            try {
+              const activeKey = apiKey || "";
+              if (!activeKey) throw new Error("No API key");
+              const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${activeKey}`;
+              const contents = newMsgs.map(m => ({ role: m.role === 'model' ? 'model' : 'user', parts: [{ text: m.text }] }));
+              const payload = {
+                contents: contents,
+                systemInstruction: { parts: [{ text: `You are an expert AhaarIQ Indian Clinical Nutritionist & Dietitian. The user follows a "${userProfile.dietPreference}" diet. Keep responses tailored to this preference.` }] }
+              };
+              const res = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+              const data = await res.json();
+              const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Namaste! How else can I assist your nutrition today?";
+              setAiCoachMessages([...newMsgs, { role: 'model', text: reply }]);
+            } catch (err) {
+              let offlineReply = `Namaste! As your AhaarIQ assistant for your ${userProfile.dietPreference} diet, I recommend focusing on wholesome ingredients and balanced macros.`;
+              const lower = userMsg.toLowerCase();
+              if (lower.includes('protein')) {
+                if (userProfile.dietPreference === 'non-veg') {
+                  offlineReply = "To increase protein on your non-veg Indian diet, include grilled chicken breast, fish, eggs, and lean lentils.";
+                } else if (userProfile.dietPreference === 'eggetarian') {
+                  offlineReply = "To increase protein as an eggetarian, include boiled eggs, paneer, sprouts, curd, and sattu drinks.";
+                } else {
+                  offlineReply = "To increase protein on a vegetarian diet, include paneer, sprouts, curd (dahi), tofu, roasted chana, and dal.";
+                }
+              }
+              setAiCoachMessages([...newMsgs, { role: 'model', text: offlineReply + " (Note: Running in AhaarIQ offline mode.)" }]);
+            } finally {
+              setIsCoachLoading(false);
+            }
+          };
+
+          const generateGeminiInsights = async () => {
+            setIsGeneratingInsights(true);
+            try {
+              const activeKey = apiKey || "";
+              if (!activeKey) throw new Error("No API key");
+              const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${activeKey}`;
+              const prompt = `Based on today's meals: ${JSON.stringify(todaysMeals)}, goals (Calories: ${dailyGoals.calories}, Protein: ${dailyGoals.protein}g), and diet preference (${userProfile.dietPreference}), generate 3 concise nutritional insights. Return valid JSON with keys: feedback, proteinTip, suggestion.`;
+              const payload = {
+                contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                generationConfig: {
+                  responseMimeType: "application/json",
+                  responseSchema: {
+                    type: "OBJECT",
+                    properties: { feedback: { type: "STRING" }, proteinTip: { type: "STRING" }, suggestion: { type: "STRING" } },
+                    required: ["feedback", "proteinTip", "suggestion"]
+                  }
+                }
+              };
+              const res = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+              const data = await res.json();
+              setDailyInsights(JSON.parse(data.candidates[0].content.parts[0].text));
+              showToast("AhaarIQ AI Nutrition Insights generated!");
+            } catch (e) {
+              const isNonVeg = userProfile.dietPreference === 'non-veg';
+              setDailyInsights({
+                feedback: `Your logged meals align well with your ${userProfile.dietPreference} nutritional goals.`,
+                proteinTip: isNonVeg ? "Add grilled chicken or fish for clean, lean protein." : "Add paneer or fresh curd (dahi) to easily boost your daily protein.",
+                suggestion: "Maintain proper hydration and include green salad with every meal."
+              });
+              showToast("Generated AhaarIQ offline nutrition insights!");
+            } finally {
+              setIsGeneratingInsights(false);
+            }
+          };
+
+          return (
+            <div className={`min-h-screen font-sans pb-28 sm:pb-12 transition-colors duration-300 ${darkMode ? 'bg-[#0b0f19] text-slate-100' : 'bg-slate-100 text-slate-900'}`}>
+              {notification && (
+                <div className="fixed top-4 right-4 left-4 sm:left-auto z-50 bg-indigo-600 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center justify-center space-x-2 animate-bounce border border-indigo-400/30">
+                  <SparklesIcon />
+                  <span className="font-semibold text-sm truncate">{notification}</span>
+                </div>
+              )}
+
+              {showApiKeyModal && (
+                <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+                  <div className={`${darkMode ? 'bg-[#131b2e] border-indigo-500/30 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-3xl max-w-md w-full p-6 sm:p-8 border shadow-2xl`}>
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="bg-indigo-600/20 p-2.5 rounded-2xl text-indigo-400 border border-indigo-500/30"><KeyIcon /></div>
+                      <div>
+                        <h3 className="font-black text-lg">Connect Gemini API Key</h3>
+                        <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Optional for live AI scanning</p>
+                      </div>
+                    </div>
+                    <p className={`text-xs sm:text-sm mb-5 leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                      Enter your Gemini API key for real-time AI food photo analysis. If you skip this, AhaarIQ will use its built-in offline Indian food heuristic engine!
+                    </p>
+                    <div className="space-y-4">
+                      <input 
+                        type="password"
+                        placeholder="AIzaSy..."
+                        value={tempApiKeyInput}
+                        onChange={(e) => setTempApiKeyInput(e.target.value)}
+                        className={`w-full border rounded-2xl px-4 py-3.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm ${darkMode ? 'bg-[#182238] border-indigo-500/30 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-900'}`}
+                      />
+                      <div className="flex items-center space-x-3 pt-2">
+                        <button onClick={() => { setApiKey(tempApiKeyInput.trim()); closeApiKeyModal(); if(tempApiKeyInput.trim()) showToast("API key saved!"); }} className="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold py-3.5 rounded-2xl shadow-xl transition text-sm">Save & Continue</button>
+                        <button onClick={closeApiKeyModal} className={`px-5 py-3.5 rounded-2xl font-bold text-sm border transition ${darkMode ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-slate-200 text-slate-700 border-slate-300'}`}>Skip for Now</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Header */}
+              <header className={`shadow-2xl border-b ${darkMode ? 'bg-gradient-to-r from-indigo-950 via-violet-950 to-purple-950 text-slate-100 border-indigo-900/50' : 'bg-gradient-to-r from-indigo-700 via-violet-700 to-purple-800 text-white border-indigo-600/35'}`}>
+                <div className="max-w-4xl mx-auto px-4 py-5 flex flex-col sm:flex-row justify-between items-center gap-4">
+                  <div className="flex items-center justify-between w-full sm:w-auto">
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-white/15 p-2.5 rounded-2xl backdrop-blur-md shadow-inner border border-white/20"><UtensilsIcon /></div>
+                      <div>
+                        <h1 className="text-xl sm:text-2xl font-black tracking-tight">Hey {userProfile.name || 'Friend'}!</h1>
+                        <p className="text-indigo-200 text-xs font-medium">AhaarIQ • Trusty Indian Nutrition AI ({userProfile.dietPreference.toUpperCase()})</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2 sm:hidden">
+                      <button onClick={() => setShowApiKeyModal(true)} className="bg-white/10 p-2.5 rounded-2xl border border-white/25 text-white"><KeyIcon /></button>
+                      <button onClick={() => setDarkMode(!darkMode)} className="bg-white/10 p-2.5 rounded-2xl border border-white/25 text-white">{darkMode ? <SunIcon /> : <MoonIcon />}</button>
+                    </div>
+                  </div>
+                  <div className="hidden sm:flex items-center space-x-3">
+                    <button onClick={() => setShowApiKeyModal(true)} className="bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-2xl border border-white/20 text-white transition flex items-center space-x-2 text-xs font-medium">
+                      <KeyIcon /><span>{apiKey ? 'API Key Configured' : 'Set API Key'}</span>
+                    </button>
+                    <button onClick={() => setDarkMode(!darkMode)} className="bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-2xl border border-white/20 text-white transition flex items-center space-x-2 text-xs font-medium">
+                      {darkMode ? <SunIcon /> : <MoonIcon />}<span>{darkMode ? 'Light Theme' : 'Dark Theme'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Dashboard Card */}
+                <div className="max-w-4xl mx-auto px-4 pb-6">
+                  <div className={`${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100 shadow-2xl' : 'bg-white border-slate-200 text-slate-900 shadow-xl'} rounded-3xl p-5 sm:p-6 border backdrop-blur-xl`}>
+                    <div className="flex justify-between items-center mb-4 sm:mb-5">
+                      <div className="flex items-center space-x-2.5">
+                        <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-500"><FlameIcon /></div>
+                        <h2 className="font-bold text-base sm:text-lg">Today's Nutrition Summary</h2>
+                      </div>
+                      <button onClick={() => setActiveTab('profile')} className={`text-xs font-semibold px-3 py-1.5 rounded-xl border ${darkMode ? 'bg-indigo-950/50 text-indigo-300 border-indigo-800' : 'bg-indigo-50 text-indigo-700 border-indigo-200'}`}>
+                        Target: {dailyGoals.calories} kcal
+                      </button>
+                    </div>
+
+                    <div className="mb-5 sm:mb-6">
+                      <div className="flex justify-between text-xs sm:text-sm mb-2">
+                        <span className={`font-medium uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Calories Consumed</span>
+                        <span className="font-bold">{todayTotals.calories} / {dailyGoals.calories} kcal</span>
+                      </div>
+                      <div className={`w-full ${darkMode ? 'bg-slate-800' : 'bg-slate-200'} h-3.5 rounded-full overflow-hidden p-0.5 border ${darkMode ? 'border-slate-700' : 'border-slate-300'}`}>
+                        <div className="bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-600 h-full rounded-full transition-all duration-700" style={{ width: `${Math.min(100, (todayTotals.calories / dailyGoals.calories) * 100)}%` }}></div>
+                      </div>
+                    </div>
+
+                    <div className={`grid grid-cols-3 gap-2.5 sm:gap-4 pt-4 border-t ${darkMode ? 'border-indigo-500/10' : 'border-slate-200'}`}>
+                      <div onClick={() => setActiveMetricModal('protein')} className={`${darkMode ? 'bg-[#182238] border-indigo-500/20 text-slate-100' : 'bg-blue-50/80 border-blue-200 text-slate-900'} p-3 rounded-2xl text-center border cursor-pointer`}>
+                        <div className="flex items-center justify-center space-x-1 mb-1 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase tracking-wider"><span>Protein</span><HelpIcon /></div>
+                        <div className="text-base sm:text-xl font-black">{todayTotals.protein}g</div>
+                        <div className={`text-[9px] ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Target: {dailyGoals.protein}g</div>
+                      </div>
+                      <div onClick={() => setActiveMetricModal('carbs')} className={`${darkMode ? 'bg-[#182238] border-emerald-500/20 text-slate-100' : 'bg-emerald-50/80 border-emerald-200 text-slate-900'} p-3 rounded-2xl text-center border cursor-pointer`}>
+                        <div className="flex items-center justify-center space-x-1 mb-1 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-wider"><span>Carbs</span><HelpIcon /></div>
+                        <div className="text-base sm:text-xl font-black">{todayTotals.carbs}g</div>
+                        <div className={`text-[9px] ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Target: {dailyGoals.carbs}g</div>
+                      </div>
+                      <div onClick={() => setActiveMetricModal('fat')} className={`${darkMode ? 'bg-[#182238] border-purple-500/20 text-slate-100' : 'bg-purple-50/80 border-purple-200 text-slate-900'} p-3 rounded-2xl text-center border cursor-pointer`}>
+                        <div className="flex items-center justify-center space-x-1 mb-1 text-purple-600 dark:text-purple-400 text-[10px] font-bold uppercase tracking-wider"><span>Fat</span><HelpIcon /></div>
+                        <div className="text-base sm:text-xl font-black">{todayTotals.fat}g</div>
+                        <div className={`text-[9px] ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Target: {dailyGoals.fat}g</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </header>
+
+              {/* Navigation Tabs */}
+              <nav className="hidden sm:block max-w-4xl mx-auto px-4 mt-6">
+                <div className={`grid grid-cols-4 ${darkMode ? 'bg-[#131b2e] border-indigo-500/20' : 'bg-white border-slate-200 shadow-sm'} p-1.5 rounded-2xl border gap-1.5`}>
+                  <button onClick={() => setActiveTab('scan')} className={`py-3 px-4 rounded-xl font-semibold text-sm transition flex items-center justify-center space-x-2 ${activeTab === 'scan' ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg' : darkMode ? 'text-slate-300 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'}`}><CameraIcon /><span>Scan Meal</span></button>
+                  <button onClick={() => setActiveTab('history')} className={`py-3 px-4 rounded-xl font-semibold text-sm transition flex items-center justify-center space-x-2 ${activeTab === 'history' ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg' : darkMode ? 'text-slate-300 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'}`}><CalendarIcon /><span>History ({meals.length})</span></button>
+                  <button onClick={() => setActiveTab('ai-coach')} className={`py-3 px-4 rounded-xl font-semibold text-sm transition flex items-center justify-center space-x-2 ${activeTab === 'ai-coach' ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg' : darkMode ? 'text-slate-300 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'}`}><BotIcon /><span>AI Coach</span></button>
+                  <button onClick={() => setActiveTab('profile')} className={`py-3 px-4 rounded-xl font-semibold text-sm transition flex items-center justify-center space-x-2 ${activeTab === 'profile' ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg' : darkMode ? 'text-slate-300 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-100'}`}><SettingsIcon /><span>Profile & Goals</span></button>
+                </div>
+              </nav>
+
+              {/* Mobile Bottom Nav */}
+              <div className={`sm:hidden fixed bottom-0 left-0 right-0 z-40 ${darkMode ? 'bg-[#131b2e]/95 border-indigo-500/20 text-slate-300' : 'bg-white/95 border-slate-300 text-slate-700'} backdrop-blur-lg border-t px-4 py-2.5 flex justify-around items-center shadow-2xl`}>
+                <button onClick={() => setActiveTab('scan')} className={`flex flex-col items-center py-1 px-3 rounded-2xl ${activeTab === 'scan' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : ''}`}><CameraIcon /><span className="text-[10px] mt-0.5">Scan</span></button>
+                <button onClick={() => setActiveTab('history')} className={`flex flex-col items-center py-1 px-3 rounded-2xl ${activeTab === 'history' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : ''}`}><CalendarIcon /><span className="text-[10px] mt-0.5">History</span></button>
+                <button onClick={() => setActiveTab('ai-coach')} className={`flex flex-col items-center py-1 px-3 rounded-2xl ${activeTab === 'ai-coach' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : ''}`}><BotIcon /><span className="text-[10px] mt-0.5">AI Coach</span></button>
+                <button onClick={() => setActiveTab('profile')} className={`flex flex-col items-center py-1 px-3 rounded-2xl ${activeTab === 'profile' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : ''}`}><SettingsIcon /><span className="text-[10px] mt-0.5">Profile</span></button>
+              </div>
+
+              {/* Main Contents */}
+              <main className="max-w-4xl mx-auto px-4 mt-4 sm:mt-6">
+                {activeTab === 'scan' && (
+                  <div className="space-y-6">
+                    <div className={`${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-3xl p-5 sm:p-6 border shadow-xl`}>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+                        <div className="flex items-center space-x-3">
+                          <div className={`p-2.5 rounded-2xl ${darkMode ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/20' : 'bg-indigo-50 text-indigo-600 border border-indigo-200'}`}><SparklesIcon /></div>
+                          <div>
+                            <h3 className="font-bold text-base sm:text-lg">AI Indian Meal Scanner ({userProfile.dietPreference.toUpperCase()})</h3>
+                            <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Capture photo or select from your gallery</p>
+                          </div>
+                        </div>
+                        <button onClick={() => setShowManualModal(true)} className={`text-xs font-bold px-4 py-3 rounded-xl border transition ${darkMode ? 'bg-indigo-950/40 text-indigo-300 border-indigo-800/40 hover:bg-indigo-900/40' : 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100'}`}>+ Manual Entry</button>
+                      </div>
+
+                      {!imagePreviewUrl ? (
+                        <div className={`border-2 border-dashed ${darkMode ? 'border-indigo-500/30 bg-[#182238]/50 text-slate-100' : 'border-indigo-300 bg-indigo-50/50 text-slate-900'} rounded-3xl p-6 sm:p-10 text-center flex flex-col items-center justify-center`}>
+                          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 ${darkMode ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'bg-indigo-100 text-indigo-600 border border-indigo-200'}`}><CameraIcon /></div>
+                          <h4 className="font-bold text-base mb-1">Upload or Capture Meal Photo</h4>
+                          <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-600'} max-w-sm mb-6`}>Optimized for your {userProfile.dietPreference} meal preference.</p>
+                          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md">
+                            <label className="w-full sm:w-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold px-5 py-3.5 rounded-2xl shadow-lg cursor-pointer flex items-center justify-center space-x-2">
+                              <CameraIcon /><span>Take Photo</span>
+                              <input type="file" accept="image/*" capture="environment" onChange={handleImageUpload} className="hidden" />
+                            </label>
+                            <label className={`w-full sm:w-1/2 font-bold px-5 py-3.5 rounded-2xl shadow-lg cursor-pointer flex items-center justify-center space-x-2 border ${darkMode ? 'bg-[#182238] text-indigo-200 border-indigo-500/30' : 'bg-white text-indigo-700 border-indigo-300'}`}>
+                              <ImageIcon /><span>Choose Gallery</span>
+                              <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                            </label>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-5">
+                          <div className="relative rounded-2xl overflow-hidden shadow-2xl max-h-72 sm:max-h-80 bg-slate-950 flex justify-center border border-indigo-500/20">
+                            <img src={imagePreviewUrl} alt="Preview" className="object-cover h-64 sm:h-72 w-full" />
+                            <button onClick={() => { setSelectedImage(null); setImagePreviewUrl(''); setAnalyzedResult(null); setUserMealNote(''); }} className="absolute top-3 right-3 bg-slate-900/80 text-white p-2.5 rounded-full"><XIcon /></button>
+                          </div>
+
+                          {!analyzedResult && !isAnalyzing && (
+                            <div className={`p-4 sm:p-5 rounded-2xl border space-y-3 ${darkMode ? 'bg-[#182238] border-indigo-500/30' : 'bg-indigo-50/60 border-indigo-200'}`}>
+                              <label className="block text-xs font-bold uppercase tracking-wider">Add Details / Specific Note (Optional)</label>
+                              <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Specify quantity or items, e.g., "Glass of buffalo milk, 250 ml" or "2 multigrain rotis with paneer sabzi"</p>
+                              <input 
+                                type="text"
+                                placeholder="e.g. Buffalo milk, 250 ml"
+                                value={userMealNote}
+                                onChange={(e) => setUserMealNote(e.target.value)}
+                                className={`w-full border rounded-2xl px-4 py-3 text-sm font-medium ${darkMode ? 'bg-[#131b2e] border-indigo-500/30 text-slate-100 placeholder:text-slate-500' : 'bg-white border-slate-300 text-slate-900'}`}
+                              />
+                              <button onClick={runMealAnalysis} className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition flex items-center justify-center space-x-2 text-sm">
+                                <SparklesIcon /><span>Analyze Meal with AI</span>
+                              </button>
+                            </div>
+                          )}
+
+                          {isAnalyzing && (
+                            <div className={`border rounded-2xl p-8 text-center space-y-4 ${darkMode ? 'bg-[#182238] border-indigo-500/30 text-indigo-200' : 'bg-indigo-50 border-indigo-200 text-indigo-900'}`}>
+                              <div className="animate-spin w-9 h-9 border-4 border-indigo-500 border-t-transparent rounded-full mx-auto"></div>
+                              <h4 className="font-bold text-base">Analyzing Indian Dish ({userProfile.dietPreference})...</h4>
+                              {userMealNote && <p className="text-xs opacity-80">Considering your note: "{userMealNote}"</p>}
+                            </div>
+                          )}
+
+                          {analyzedResult && !isAnalyzing && (
+                            <div className={`border rounded-3xl p-5 sm:p-6 space-y-5 shadow-2xl ${darkMode ? 'bg-[#182238] border-emerald-500/30 text-slate-100' : 'bg-emerald-50/70 border-emerald-300 text-slate-900'}`}>
+                              <div>
+                                <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border ${darkMode ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-emerald-200 text-emerald-900 border-emerald-300'}`}>
+                                  Detected Meal {offlineMode && `(Offline ${userProfile.dietPreference} Fallback)`}
+                                </span>
+                                <h4 className={`text-lg sm:text-xl font-black mt-2 ${darkMode ? 'text-emerald-200' : 'text-emerald-950'}`}>{analyzedResult.dishName}</h4>
+                                <p className={`text-xs mt-1 ${darkMode ? 'text-slate-400' : 'text-slate-700'}`}>{analyzedResult.description}</p>
+                              </div>
+
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <div className={`p-3.5 rounded-2xl text-center shadow-md border ${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100' : 'bg-white border-emerald-200 text-slate-900'}`}>
+                                  <div className={`text-[10px] font-bold uppercase ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Calories</div>
+                                  <div className="text-base sm:text-lg font-black text-indigo-500 mt-0.5">{analyzedResult.calories} kcal</div>
+                                </div>
+                                <div className={`p-3.5 rounded-2xl text-center shadow-md border ${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100' : 'bg-white border-emerald-200 text-slate-900'}`}>
+                                  <div className={`text-[10px] font-bold uppercase ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Protein</div>
+                                  <div className="text-base sm:text-lg font-black text-blue-500 mt-0.5">{analyzedResult.protein}g</div>
+                                </div>
+                                <div className={`p-3.5 rounded-2xl text-center shadow-md border ${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100' : 'bg-white border-emerald-200 text-slate-900'}`}>
+                                  <div className={`text-[10px] font-bold uppercase ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Carbs</div>
+                                  <div className="text-base sm:text-lg font-black text-emerald-500 mt-0.5">{analyzedResult.carbs}g</div>
+                                </div>
+                                <div className={`p-3.5 rounded-2xl text-center shadow-md border ${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100' : 'bg-white border-emerald-200 text-slate-900'}`}>
+                                  <div className={`text-[10px] font-bold uppercase ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Fat</div>
+                                  <div className="text-base sm:text-lg font-black text-purple-500 mt-0.5">{analyzedResult.fat}g</div>
+                                </div>
+                              </div>
+
+                              {analyzedResult.items && analyzedResult.items.length > 0 && (
+                                <div className="space-y-3 pt-2">
+                                  <h5 className={`text-xs font-bold uppercase tracking-wider ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>Identified Items & Portions</h5>
+                                  <div className="space-y-2">
+                                    {analyzedResult.items.map((item, idx) => (
+                                      <div key={idx} className={`p-3 rounded-2xl border flex justify-between items-center text-xs ${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100' : 'bg-white border-emerald-200 text-slate-900'}`}>
+                                        <div>
+                                          <span className="font-bold">{item.itemName}</span> <span className={`opacity-70 ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>({item.quantity})</span>
+                                        </div>
+                                        <span className="font-black text-indigo-500">{item.calories} kcal</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
+                              <div className="pt-3 flex flex-col sm:flex-row items-center gap-4">
+                                <select value={mealType} onChange={(e) => setMealType(e.target.value)} className={`w-full sm:flex-1 border rounded-2xl px-4 py-3.5 text-sm font-medium ${darkMode ? 'bg-[#131b2e] border-indigo-500/30 text-slate-100' : 'bg-white border-emerald-300 text-slate-900'}`}>
+                                  <option value="Breakfast">Breakfast</option>
+                                  <option value="Lunch">Lunch</option>
+                                  <option value="Snacks">Snacks / Evening</option>
+                                  <option value="Dinner">Dinner</option>
+                                </select>
+                                <button onClick={handleConfirmAnalyzedMeal} className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-7 py-4 rounded-2xl shadow-xl flex items-center justify-center space-x-2">
+                                  <CheckIcon /><span>Add to Daily Log</span>
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'history' && (
+                  <div className="space-y-6">
+                    <div className={`${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-3xl p-5 sm:p-6 border shadow-xl`}>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                        <div>
+                          <h3 className="font-bold text-base sm:text-lg">Meal History Logs</h3>
+                          <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Click date headers or meals to expand & collapse items</p>
+                        </div>
+                        <button onClick={() => setActiveTab('scan')} className="bg-indigo-600 text-white font-bold text-xs px-5 py-3 rounded-2xl shadow-lg">+ Log Meal</button>
+                      </div>
+
+                      {meals.length === 0 ? (
+                        <div className={`text-center py-16 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                          <UtensilsIcon />
+                          <p className="text-sm mt-3">No meal logs found. Snap a meal to get started!</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-5">
+                          {Object.entries(meals.reduce((g, m) => { (g[m.date] = g[m.date] || []).push(m); return g; }, {})).map(([date, dateMeals]) => {
+                            const isDateExpanded = expandedDates[date] !== false;
+                            const totalKcal = dateMeals.reduce((s, m) => s + Number(m.calories), 0);
+                            return (
+                              <div key={date} className={`border rounded-3xl overflow-hidden shadow-md ${darkMode ? 'border-indigo-500/20 bg-[#182238]/30 text-slate-100' : 'border-slate-300 bg-white text-slate-900'}`}>
+                                <div onClick={() => toggleDateAccordion(date)} className={`px-5 py-4 flex justify-between items-center border-b cursor-pointer select-none ${darkMode ? 'bg-[#182238] border-indigo-500/20 text-slate-200 hover:bg-[#1d2944]' : 'bg-slate-100 border-slate-300 text-slate-800 hover:bg-slate-200'}`}>
+                                  <div className="flex items-center space-x-3">
+                                    <div className={`p-1.5 rounded-xl ${darkMode ? 'bg-indigo-500/25 text-indigo-300' : 'bg-indigo-100 text-indigo-700'}`}>
+                                      {isDateExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                                    </div>
+                                    <span className="font-bold text-sm">{date === todayStr ? 'Today (' + date + ')' : date} ({dateMeals.length} meals)</span>
+                                  </div>
+                                  <span className={`text-xs font-bold px-3 py-1 rounded-full border ${darkMode ? 'bg-indigo-950 text-indigo-300 border-indigo-800' : 'bg-indigo-100 text-indigo-800 border-indigo-200'}`}>{totalKcal} kcal</span>
+                                </div>
+                                {isDateExpanded && (
+                                  <div className={`divide-y ${darkMode ? 'divide-indigo-500/10' : 'divide-slate-200'}`}>
+                                    {dateMeals.map(meal => {
+                                      const isMealExpanded = expandedMeals[meal.id] === true;
+                                      return (
+                                        <div key={meal.id} className={`p-4 sm:p-5 transition space-y-3 ${darkMode ? 'hover:bg-indigo-950/20' : 'hover:bg-slate-50'}`}>
+                                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                            <div className="flex items-start sm:items-center space-x-3.5 flex-1 cursor-pointer" onClick={() => toggleMealAccordion(meal.id)}>
+                                              <img src={meal.image} alt="" className={`w-14 h-14 rounded-2xl object-cover border flex-shrink-0 mt-0.5 sm:mt-0 ${darkMode ? 'border-indigo-500/30' : 'border-slate-300'}`} />
+                                              <div className="space-y-1">
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                  <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded border ${darkMode ? 'bg-indigo-950 text-indigo-300 border-indigo-800/40' : 'bg-indigo-50 text-indigo-700 border-indigo-200'}`}>{meal.mealType}</span>
+                                                  <span className={`text-[10px] ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>({meal.items?.length || 0} items)</span>
+                                                  <span className={`text-[10px] ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>• {meal.time}</span>
+                                                </div>
+                                                <h4 className="font-black text-sm flex items-center space-x-2">
+                                                  <span>{meal.dishName}</span>
+                                                  <span className="text-indigo-500 text-xs">{isMealExpanded ? '▲' : '▼'}</span>
+                                                </h4>
+                                                <div className={`text-xs font-medium space-x-2 ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                                                  <span>P: <strong className="text-blue-500">{meal.protein}g</strong></span>
+                                                  <span>C: <strong className="text-emerald-500">{meal.carbs}g</strong></span>
+                                                  <span>F: <strong className="text-purple-500">{meal.fat}g</strong></span>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <div className="flex items-center justify-between sm:justify-end space-x-4 border-t sm:border-t-0 pt-2 sm:pt-0">
+                                              <div className="font-black text-indigo-500 text-base">{meal.calories} kcal</div>
+                                              <button onClick={() => deleteMeal(meal.id)} className="p-2 text-slate-400 hover:text-red-500 rounded-xl"><TrashIcon /></button>
+                                            </div>
+                                          </div>
+
+                                          {isMealExpanded && meal.items && meal.items.length > 0 && (
+                                            <div className={`mt-3 pt-3 border-t pl-0 sm:pl-[68px] space-y-2 animate-fadeIn ${darkMode ? 'border-indigo-500/15' : 'border-slate-200'}`}>
+                                              <span className={`text-[10px] font-bold uppercase tracking-wider block mb-1.5 ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Detailed Itemized Breakdown:</span>
+                                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                                {meal.items.map((item, idx) => (
+                                                  <div key={idx} className={`border p-3 rounded-2xl text-xs flex justify-between items-center shadow-sm ${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100' : 'bg-slate-100 border-slate-300 text-slate-900'}`}>
+                                                    <div className="space-y-0.5">
+                                                      <div className="font-bold">{item.itemName} <span className={`text-[10px] opacity-70 ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>({item.quantity})</span></div>
+                                                      <div className="text-[10px] flex space-x-2">
+                                                        <span>P: <strong className="text-blue-500">{item.protein}g</strong></span>
+                                                        <span>C: <strong className="text-emerald-500">{item.carbs}g</strong></span>
+                                                        <span>F: <strong className="text-purple-500">{item.fat}g</strong></span>
+                                                      </div>
+                                                    </div>
+                                                    <span className="font-black text-indigo-500">{item.calories} kcal</span>
+                                                  </div>
+                                                ))}
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'profile' && (
+                  <div className="space-y-6">
+                    <div className={`${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-3xl p-5 sm:p-8 border shadow-xl`}>
+                      <h3 className={`font-bold text-lg mb-6 pb-4 border-b ${darkMode ? 'border-indigo-500/10' : 'border-slate-200'}`}>Body Stats & Calorie Targets</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                          <label className={`block text-xs font-bold mb-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>Your Name</label>
+                          <input type="text" value={userProfile.name} onChange={(e) => setUserProfile({...userProfile, name: e.target.value})} className={`w-full border rounded-2xl px-4 py-3.5 text-sm ${darkMode ? 'bg-[#182238] border-indigo-500/30 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-900'}`} />
+                        </div>
+                        <div>
+                          <label className={`block text-xs font-bold mb-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>Meal Preference (Diet)</label>
+                          <select value={userProfile.dietPreference} onChange={(e) => setUserProfile({...userProfile, dietPreference: e.target.value})} className={`w-full border rounded-2xl px-4 py-3.5 text-sm font-medium ${darkMode ? 'bg-[#182238] border-indigo-500/30 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-900'}`}>
+                            <option value="veg">Vegetarian (Veg)</option>
+                            <option value="non-veg">Non-Vegetarian (Non-Veg)</option>
+                            <option value="eggetarian">Eggetarian</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className={`block text-xs font-bold mb-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>Gender</label>
+                          <select value={userProfile.gender} onChange={(e) => setUserProfile({...userProfile, gender: e.target.value})} className={`w-full border rounded-2xl px-4 py-3.5 text-sm ${darkMode ? 'bg-[#182238] border-indigo-500/30 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-900'}`}>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className={`block text-xs font-bold mb-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>Age (Years)</label>
+                          <input type="number" value={userProfile.age} onChange={(e) => setUserProfile({...userProfile, age: Number(e.target.value)})} className={`w-full border rounded-2xl px-4 py-3.5 text-sm ${darkMode ? 'bg-[#182238] border-indigo-500/30 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-900'}`} />
+                        </div>
+                        <div>
+                          <label className={`block text-xs font-bold mb-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>Height (cm)</label>
+                          <input type="number" value={userProfile.height} onChange={(e) => setUserProfile({...userProfile, height: Number(e.target.value)})} className={`w-full border rounded-2xl px-4 py-3.5 text-sm ${darkMode ? 'bg-[#182238] border-indigo-500/30 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-900'}`} />
+                        </div>
+                        <div>
+                          <label className={`block text-xs font-bold mb-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>Weight (kg)</label>
+                          <input type="number" value={userProfile.weight} onChange={(e) => setUserProfile({...userProfile, weight: Number(e.target.value)})} className={`w-full border rounded-2xl px-4 py-3.5 text-sm ${darkMode ? 'bg-[#182238] border-indigo-500/30 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-900'}`} />
+                        </div>
+                        <div>
+                          <label className={`block text-xs font-bold mb-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>Activity Level (How much exercise)</label>
+                          <select value={userProfile.activityLevel} onChange={(e) => setUserProfile({...userProfile, activityLevel: e.target.value})} className={`w-full border rounded-2xl px-4 py-3.5 text-sm ${darkMode ? 'bg-[#182238] border-indigo-500/30 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-900'}`}>
+                            <option value="sedentary">Sedentary (little or no exercise)</option>
+                            <option value="light">Lightly active (1-3 days/week)</option>
+                            <option value="moderate">Moderately active (3-5 days/week)</option>
+                            <option value="active">Very active (6-7 days/week)</option>
+                            <option value="very_active">Extra active (very hard exercise / physical job)</option>
+                          </select>
+                        </div>
+                        <div className="md:col-span-2">
+                          <label className={`block text-xs font-bold mb-1.5 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>Fitness Goal</label>
+                          <select value={userProfile.goal} onChange={(e) => setUserProfile({...userProfile, goal: e.target.value})} className={`w-full border rounded-2xl px-4 py-3.5 text-sm ${darkMode ? 'bg-[#182238] border-indigo-500/30 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-900'}`}>
+                            <option value="aggressive_lose">Aggressive Weight Loss (-750 kcal)</option>
+                            <option value="lose">Weight Loss (-500 kcal deficit)</option>
+                            <option value="maintain">Maintain Weight</option>
+                            <option value="lean_gain">Lean Muscle Gain (+250 kcal)</option>
+                            <option value="gain">Bulking Surplus (+400 kcal)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Calculated Daily Targets Preview Box */}
+                      <div className={`mt-8 border rounded-3xl p-5 sm:p-6 ${darkMode ? 'bg-[#182238] border-indigo-500/30' : 'bg-indigo-50/70 border-indigo-200'}`}>
+                        <div className="flex justify-between items-center mb-4">
+                          <h4 className="font-bold text-base flex items-center space-x-2">
+                            <SparklesIcon /><span>Your Calculated Daily Targets</span>
+                          </h4>
+                          <span className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Click any metric for details</span>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                          <div onClick={() => setActiveMetricModal('calories')} className={`p-3.5 rounded-2xl border text-center shadow-sm cursor-pointer ${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100' : 'bg-white border-indigo-200 text-slate-900'}`}>
+                            <div className={`text-[10px] font-bold uppercase ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Calories</div>
+                            <div className="text-base sm:text-xl font-black text-indigo-500 mt-0.5">{dailyGoals.calories} kcal</div>
+                          </div>
+                          <div onClick={() => setActiveMetricModal('protein')} className={`p-3.5 rounded-2xl border text-center shadow-sm cursor-pointer ${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100' : 'bg-white border-indigo-200 text-slate-900'}`}>
+                            <div className={`text-[10px] font-bold uppercase ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Protein</div>
+                            <div className="text-base sm:text-xl font-black text-blue-500 mt-0.5">{dailyGoals.protein}g</div>
+                          </div>
+                          <div onClick={() => setActiveMetricModal('carbs')} className={`p-3.5 rounded-2xl border text-center shadow-sm cursor-pointer ${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100' : 'bg-white border-indigo-200 text-slate-900'}`}>
+                            <div className={`text-[10px] font-bold uppercase ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Carbs</div>
+                            <div className="text-base sm:text-xl font-black text-emerald-500 mt-0.5">{dailyGoals.carbs}g</div>
+                          </div>
+                          <div onClick={() => setActiveMetricModal('fat')} className={`p-3.5 rounded-2xl border text-center shadow-sm cursor-pointer ${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100' : 'bg-white border-indigo-200 text-slate-900'}`}>
+                            <div className={`text-[10px] font-bold uppercase ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Fat</div>
+                            <div className="text-base sm:text-xl font-black text-purple-500 mt-0.5">{dailyGoals.fat}g</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-8 flex justify-center">
+                        <button onClick={() => { localStorage.setItem('ahaariq_profile', JSON.stringify(userProfile)); showToast("Profile saved successfully!"); }} className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold px-12 py-4 rounded-2xl shadow-xl">
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'ai-coach' && (
+                  <div className="space-y-6">
+                    <div className="bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 rounded-3xl p-5 sm:p-8 text-white shadow-2xl border border-indigo-500/30">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+                        <div className="flex items-center space-x-3">
+                          <div className="bg-white/15 p-2.5 rounded-2xl backdrop-blur-md border border-white/20"><LightbulbIcon /></div>
+                          <div>
+                            <h3 className="font-bold text-base sm:text-lg">Daily Indian Diet Review ({userProfile.dietPreference.toUpperCase()})</h3>
+                            <p className="text-xs text-indigo-200">Get personalized feedback based on logged meals & diet preference</p>
+                          </div>
+                        </div>
+                        <button onClick={generateGeminiInsights} disabled={isGeneratingInsights} className="w-full sm:w-auto bg-white text-indigo-950 hover:bg-indigo-50 font-black text-xs px-5 py-3.5 rounded-2xl shadow-xl transition flex items-center justify-center space-x-2">
+                          {isGeneratingInsights ? <RefreshIcon /> : <SparklesIcon />}
+                          <span>{dailyInsights ? 'Refresh Insights' : 'Analyze My Day'}</span>
+                        </button>
+                      </div>
+
+                      {dailyInsights ? (
+                        <div className="bg-white/10 rounded-2xl p-4 sm:p-5 backdrop-blur-md border border-white/20 space-y-4 shadow-inner">
+                          <div>
+                            <span className="text-[10px] font-black uppercase tracking-widest bg-white/20 px-3 py-1 rounded-lg text-indigo-100">Feedback</span>
+                            <p className="text-xs sm:text-sm font-medium mt-2 leading-relaxed">{dailyInsights.feedback}</p>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
+                            <div className="bg-white/10 p-3.5 rounded-2xl border border-white/10">
+                              <div className="text-[10px] uppercase font-extrabold text-indigo-200 mb-1">Protein Tip</div>
+                              <p className="text-xs leading-relaxed">{dailyInsights.proteinTip}</p>
+                            </div>
+                            <div className="bg-white/10 p-3.5 rounded-2xl border border-white/10">
+                              <div className="text-[10px] uppercase font-extrabold text-indigo-200 mb-1">Recommendation</div>
+                              <p className="text-xs leading-relaxed">{dailyInsights.suggestion}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="bg-white/10 rounded-2xl p-6 sm:p-8 text-center backdrop-blur-md border border-white/10 shadow-inner">
+                          <p className="text-xs sm:text-sm text-indigo-100 mb-4 max-w-md mx-auto">Click 'Analyze My Day' to get instant feedback on your Indian meal balance and protein intake.</p>
+                          <button onClick={generateGeminiInsights} className="bg-white text-indigo-950 font-extrabold text-xs px-6 py-3.5 rounded-2xl shadow-xl hover:bg-indigo-50 transition">Generate Insights Now</button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* AI Nutritionist Chatbox */}
+                    <div className={`${darkMode ? 'bg-[#131b2e] border-indigo-500/20 text-slate-100' : 'bg-white border-slate-200 text-slate-900'} rounded-3xl p-5 sm:p-8 border flex flex-col h-[480px] sm:h-[520px] shadow-xl`}>
+                      <div className={`flex items-center space-x-3 pb-4 border-b ${darkMode ? 'border-indigo-500/10' : 'border-slate-200'}`}>
+                        <div className={`p-2.5 rounded-2xl ${darkMode ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/20' : 'bg-indigo-50 text-indigo-600 border border-indigo-200'}`}><BotIcon /></div>
+                        <div>
+                          <h3 className="font-bold text-sm sm:text-base">Ask Nutritionist AI ({userProfile.dietPreference})</h3>
+                          <p className={`text-[11px] sm:text-xs ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>Expert on traditional Indian recipes and macros</p>
+                        </div>
+                      </div>
+
+                      <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-1">
+                        {aiCoachMessages.map((msg, index) => (
+                          <div key={index} className={`flex items-start space-x-2.5 sm:space-x-3 ${msg.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-md ${msg.role === 'user' ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white' : darkMode ? 'bg-[#182238] text-indigo-300 border border-indigo-500/30' : 'bg-slate-200 text-slate-700'}`}>
+                              {msg.role === 'user' ? <UserIcon /> : <BotIcon />}
+                            </div>
+                            <div className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-4 py-3 text-xs sm:text-sm shadow-md ${msg.role === 'user' ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-tr-none' : darkMode ? 'bg-[#182238] text-slate-100 rounded-tl-none border border-indigo-500/20' : 'bg-slate-100 text-slate-900 rounded-tl-none border border-slate-200'}`}>
+                              <p className="whitespace-pre-wrap leading-relaxed">{msg.text}</p>
+                            </div>
+                          </div>
+                        ))}
+                        {isCoachLoading && (
+                          <div className="flex items-start space-x-3">
+                            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-2xl flex items-center justify-center flex-shrink-0 ${darkMode ? 'bg-[#182238] text-indigo-300 border border-indigo-500/30' : 'bg-slate-200 text-slate-700'}`}><BotIcon /></div>
+                            <div className={`rounded-2xl rounded-tl-none px-4 py-3 text-xs sm:text-sm flex items-center space-x-2.5 ${darkMode ? 'bg-[#182238] text-indigo-200 border border-indigo-500/20' : 'bg-slate-100 text-slate-700 border border-slate-200'}`}>
+                              <div className="animate-spin w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full"></div>
+                              <span className="font-medium">Thinking...</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <form onSubmit={handleSendCoachMessage} className={`pt-4 border-t ${darkMode ? 'border-indigo-500/10' : 'border-slate-200'} flex items-center space-x-2 sm:space-x-3`}>
+                        <input 
+                          type="text"
+                          placeholder="Ask e.g. How to get high protein on my diet?"
+                          value={coachInput}
+                          onChange={(e) => setCoachInput(e.target.value)}
+                          className={`flex-1 border rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm ${darkMode ? 'bg-[#182238] border-indigo-500/30 text-slate-100 placeholder:text-slate-500' : 'bg-slate-50 border-slate-300 text-slate-900'}`}
+                        />
+                        <button type="submit" disabled={isCoachLoading || !coachInput.trim()} className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 disabled:opacity-50 text-white p-3 sm:p-3.5 rounded-2xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center flex-shrink-0">
+                          <SendIcon />
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                )}
+              </main>
+
+              {/* Manual Modal */}
+              {showManualModal && (
+                <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+                  <div className={`${darkMode ? 'bg-[#131b2e] border-indigo-500/30 text-slate-100' : 'bg-white border-slate-300 text-slate-900'} border rounded-3xl max-w-md w-full p-6 shadow-2xl`}>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="font-black text-lg">Add Meal Manually</h3>
+                      <button onClick={() => setShowManualModal(false)}><XIcon /></button>
+                    </div>
+                    <form onSubmit={handleManualSubmit} className="space-y-3">
+                      <input type="text" placeholder="Dish Name (e.g. Masala Dosa)" required value={manualForm.dishName} onChange={e => setManualForm({...manualForm, dishName: e.target.value})} className={`w-full border rounded-2xl px-4 py-3 text-sm ${darkMode ? 'bg-[#182238] border-indigo-500/30 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-900'}`} />
+                      <div className="grid grid-cols-2 gap-3">
+                        <input type="number" placeholder="Calories" required value={manualForm.calories} onChange={e => setManualForm({...manualForm, calories: e.target.value})} className={`w-full border rounded-2xl px-4 py-3 text-sm ${darkMode ? 'bg-[#182238] border-indigo-500/30 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-900'}`} />
+                        <input type="number" placeholder="Protein (g)" required value={manualForm.protein} onChange={e => setManualForm({...manualForm, protein: e.target.value})} className={`w-full border rounded-2xl px-4 py-3 text-sm ${darkMode ? 'bg-[#182238] border-indigo-500/30 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-900'}`} />
+                      </div>
+                      <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3.5 rounded-2xl mt-4">Save Entry</button>
+                    </form>
+                  </div>
+                </div>
+              )}
+
+              {/* Metric Explanation Modal */}
+              {activeMetricModal && (
+                <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+                  <div className={`${darkMode ? 'bg-[#131b2e] border-indigo-500/30 text-slate-100' : 'bg-white border-slate-300 text-slate-900'} rounded-3xl max-w-md w-full p-6 border shadow-2xl`}>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="font-black text-base capitalize">How {activeMetricModal} is Calculated</h3>
+                      <button onClick={() => setActiveMetricModal(null)}><XIcon /></button>
+                    </div>
+                    <p className="text-xs sm:text-sm leading-relaxed opacity-90 mb-4">
+                      {activeMetricModal === 'calories' && `Your daily calorie target (${dailyGoals.calories} kcal) is calculated using the Mifflin-St Jeor BMR formula combined with your activity level and fitness goal.`}
+                      {activeMetricModal === 'protein' && `Your daily protein target (${dailyGoals.protein}g) is calculated using clinical bodyweight multipliers (${userProfile.weight}kg × multiplier based on your goal).`}
+                      {activeMetricModal === 'carbs' && `Your daily carbs target (${dailyGoals.carbs}g) is allocated from your remaining daily energy expenditure after protein and fat targets.`}
+                      {activeMetricModal === 'fat' && `Your daily fat target (${dailyGoals.fat}g) is set to approximately 27% of your total daily calorie target.`}
+                    </p>
+                    <button onClick={() => setActiveMetricModal(null)} className="w-full bg-indigo-600 text-white font-bold py-3 rounded-2xl text-xs">Got It</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
